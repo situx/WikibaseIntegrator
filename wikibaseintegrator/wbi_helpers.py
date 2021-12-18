@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 import requests
 from requests import Session
 
+from wikibaseintegrator.models import Claim
 from wikibaseintegrator.wbi_backoff import wbi_backoff
 from wikibaseintegrator.wbi_config import config
 from wikibaseintegrator.wbi_exceptions import MWApiError, SearchError
@@ -411,6 +412,61 @@ def generate_entity_instances(entities: Union[str, List[str]], allow_anonymous: 
         entity_instances.append((qid, ii))
 
     return entity_instances
+
+
+def wb_cirrus_search(haswbstatement=None, hasnotwbstatement=None, use_statement_quantity=False, hasdescription=None, haslabel=None, max_results=500, dict_result=False,
+                     allow_anonymous=True, **kwargs):
+    if isinstance(haswbstatement, Claim):
+        haswbstatement = [haswbstatement]
+
+    search_string = ""
+
+    for statement in haswbstatement:
+        if isinstance(statement, Claim):
+            search_string = search_string + "haswbstatement:{prop_nr}={value}".format({'prop_nr': statement.mainsnak.property_number, 'value': statement.value})
+
+    params = {
+        'action': 'query',
+        'list': 'search',
+        'srsearch': search_string,
+        'srlimit': 50,
+        'format': 'json'
+    }
+
+    cont_count = 0
+    results = []
+
+    while True:
+        params.update({'continue': cont_count})
+
+        search_results = mediawiki_api_call_helper(data=params, allow_anonymous=allow_anonymous, **kwargs)
+
+        if search_results['success'] != 1:
+            raise SearchError('Wikibase API wbsearchentities failed')
+
+        for i in search_results['search']:
+            if dict_result:
+                description = i['description'] if 'description' in i else None
+                aliases = i['aliases'] if 'aliases' in i else None
+                results.append({
+                    'id': i['id'],
+                    'label': i['label'],
+                    'match': i['match'],
+                    'description': description,
+                    'aliases': aliases
+                })
+            else:
+                results.append(i['id'])
+
+        if 'search-continue' not in search_results:
+            break
+
+        cont_count = search_results['search-continue']
+
+        if cont_count >= max_results:
+            break
+
+    return results
 
 
 def format_amount(amount: Union[int, str, float]) -> str:
