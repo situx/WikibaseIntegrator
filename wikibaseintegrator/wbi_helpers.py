@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 import requests
 from requests import Session
 
+from wikibaseintegrator.datatypes import ExternalID, Form, Item, Lexeme, Property, Quantity, Sense, String
 from wikibaseintegrator.models import Claim
 from wikibaseintegrator.wbi_backoff import wbi_backoff
 from wikibaseintegrator.wbi_config import config
@@ -443,8 +444,12 @@ def wb_cirrus_search(haswbstatement=None, hasnotwbstatement=None, use_statement_
     search_string = ""
 
     for statement in haswbstatement:
-        if isinstance(statement, Claim):
-            search_string = search_string + "haswbstatement:{prop_nr}={value}".format({'prop_nr': statement.mainsnak.property_number, 'value': statement.value})
+        if isinstance(statement, (ExternalID, Form, Item, Lexeme, Property, Sense, String)):
+            search_string += f" haswbstatement:{statement.mainsnak.property_number}={statement.mainsnak.datavalue}"
+        elif isinstance(statement, Quantity):
+            search_string += f" wbstatementquantity:{statement.mainsnak.property_number}={statement.mainsnak.datavalue}"
+        else:
+            raise ValueError(f"Instance type {statement.DTYPE} is not supported.")
 
     params = {
         'action': 'query',
