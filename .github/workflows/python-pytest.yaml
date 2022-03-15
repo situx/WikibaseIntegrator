@@ -37,11 +37,11 @@ jobs:
           docker-compose -f ./docker-compose.yml -f ./docker-compose.extra.yml up -d
         working-directory: test/docker-compose
         env:
-          WIKIBASE_BUNDLE_IMAGE_NAME: ${{ matrix.mediawiki-version }}
+          WIKIBASE_BUNDLE_IMAGE_NAME: wikibase/wikibase-bundle:${{ matrix.mediawiki-version }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4.3.0
         with:
-          python-version: wikibase/wikibase-bundle:${{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
       - name: Cache pip
         uses: actions/cache@v3
         with:
