@@ -568,7 +568,7 @@ for entrez_id, ensembl in raw_data.items():
 
 Note: Fastrun mode checks for equality of property/value pairs, qualifiers (not including qualifier attributes), labels,
 aliases and description, but it ignores references by default!
-References can be checked in fast run mode by setting `use_refs` to `True`.
+References can be checked in fast run mode by setting `use_references` to `True`.
 
 # Debugging #
 

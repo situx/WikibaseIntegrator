@@ -6,3 +6,4 @@ class MusicalNotation(String):
     Implements the Wikibase data type 'musical-notation'
     """
     DTYPE = 'musical-notation'
+    PTYPE = 'http://wikiba.se/ontology#MusicalNotation'
