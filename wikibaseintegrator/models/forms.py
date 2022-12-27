@@ -40,6 +40,9 @@ class Forms(BaseModel):
 
         return json_data
 
+    def __iter__(self):
+        return self.forms
+
 
 class Form(BaseModel):
     def __init__(self, form_id: Optional[str] = None, representations: Optional[Representations] = None, grammatical_features: Optional[Union[str, int, List[str]]] = None, claims: Optional[Claims] = None):
