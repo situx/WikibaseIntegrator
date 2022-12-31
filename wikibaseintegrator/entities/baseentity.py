@@ -210,7 +210,7 @@ class BaseEntity:
         self.claims.from_json(json_data['claims'])
         return self
 
-    def _write(self, data: Optional[Dict] = None, summary: Optional[str] = None, login: Optional[_Login] = None, allow_anonymous: bool = False, clear: bool = False, is_bot: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
+    def _write(self, data: Optional[Dict] = None, summary: Optional[str] = None, login: Optional[_Login] = None, allow_anonymous: bool = False, clear: bool = False, as_new: bool = False, is_bot: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
         """
         Writes the entity JSON to the Wikibase instance and after successful write, returns the "entity" part of the response.
 
@@ -287,7 +287,7 @@ class BaseEntity:
 
             return delete_page(title=None, pageid=self.pageid, login=login, allow_anonymous=allow_anonymous, is_bot=is_bot, **kwargs)
 
-    def write_required(self, base_filter: Optional[List[BaseDataType | List[BaseDataType]]], **kwargs: Any) -> bool:
+    def write_required(self, base_filter: List[BaseDataType | List[BaseDataType]], **kwargs: Any) -> bool:
         fastrun_container = wbi_fastrun.get_fastrun_container(base_filter=base_filter, **kwargs)
 
         pfilter: Set = set()
