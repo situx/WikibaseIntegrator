@@ -6,6 +6,7 @@ from wikibaseintegrator import WikibaseIntegrator, datatypes, wbi_fastrun
 from wikibaseintegrator.datatypes import BaseDataType, Item
 from wikibaseintegrator.entities import BaseEntity, ItemEntity
 from wikibaseintegrator.wbi_config import config as wbi_config
+from wikibaseintegrator.wbi_enums import WikibaseDatatype
 
 wbi_config['USER_AGENT'] = 'WikibaseIntegrator-pytest/1.0 (test_all.py)'
 
